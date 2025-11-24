@@ -46,14 +46,50 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Backend\Board.cs" />
+    <Compile Include="Backend\BoardCell.cs" />
+    <Compile Include="Backend\GameHandler.cs" />
+    <Compile Include="Backend\Ships\BattleshipShip.cs" />
+    <Compile Include="Backend\Ships\Ship.cs" />
+    <Compile Include="Frontend\BoardRenderer.cs" />
+    <Compile Include="Frontend\ConcreteRenderers.cs" />
+    <Compile Include="Frontend\DynamicGraphicsHandler.cs" />
+    <Compile Include="Frontend\IShipRenderer.cs" />
+    <Compile Include="GamePVC.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="GamePVC.Designer.cs">
+      <DependentUpon>GamePVC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GamePVP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GamePVP.Designer.cs">
+      <DependentUpon>GamePVP.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GamePVPRush.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GamePVPRush.Designer.cs">
+      <DependentUpon>GamePVPRush.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NewGamePage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewGamePage.Designer.cs">
+      <DependentUpon>NewGamePage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StartPage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StartPage.Designer.cs">
+      <DependentUpon>StartPage.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="NewGamePage.resx">
+      <DependentUpon>NewGamePage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -62,7 +98,11 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="StartPage.resx">
+      <DependentUpon>StartPage.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -75,6 +115,27 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\setting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ship_Battleship_Back_Hor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ship_Battleship_Back_Ver.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ship_Battleship_Front_Hor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ship_Battleship_Front_Ver.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ship_Battleship_Middle_Hor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Ship_Battleship_Middle_Ver.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

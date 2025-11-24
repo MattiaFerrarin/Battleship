@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace BattleshipWinforms
 {
-    public partial class Form1 : Form
+    public partial class GamePVPRush : Form
     {
-        public Form1()
+        public GamePVPRush()
         {
             InitializeComponent();
         }
