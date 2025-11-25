@@ -12,6 +12,7 @@ namespace BattleshipWinforms.Frontend
 {
     public static class BoardRenderer
     {
+        private static Size _IndividualCellSize = new Size(30,30);
         public static TableLayoutPanel CreateBoard(Board board, Action<int, int> onCellClick)
         {
             int w = board.Width;
@@ -21,8 +22,8 @@ namespace BattleshipWinforms.Frontend
             {
                 RowCount = h,
                 ColumnCount = w,
-                Width = w * 30,
-                Height = h * 30,
+                Width = w * _IndividualCellSize.Width,
+                Height = h * _IndividualCellSize.Height,
                 CellBorderStyle = TableLayoutPanelCellBorderStyle.Single
             };
 
@@ -39,14 +40,13 @@ namespace BattleshipWinforms.Frontend
                     {
                         Dock = DockStyle.Fill,
                         SizeMode = PictureBoxSizeMode.StretchImage,
-                        Tag = (x, y), // Saves coordinates inside the picturebox to access them later
-                        BackColor = Color.LightBlue
+                        Tag = (x, y),
+                        BackColor = StateToBackColor(ExternalCellState.Uncovered)
                     };
 
-                    // OnClick invoke the OnCellClick event
                     picBox.Click += (sender, e) =>
                     {
-                        (int x, int y) coords = ((int,int)) ((PictureBox)sender).Tag;
+                        (int x, int y) coords = ((int, int))((PictureBox)sender).Tag;
                         onCellClick?.Invoke(coords.x, coords.y);
                     };
 
@@ -55,6 +55,19 @@ namespace BattleshipWinforms.Frontend
             }
 
             return tlp;
+        }
+
+        public static Color StateToBackColor(ExternalCellState state)
+        {
+            switch (state)
+            {
+                case ExternalCellState.Hit:
+                    return Color.Red;
+                case ExternalCellState.Miss:
+                    return Color.WhiteSmoke;
+                default:
+                    return Color.LightBlue;
+            }
         }
     }
 }

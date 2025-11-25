@@ -20,8 +20,8 @@ namespace BattleshipWinforms.Backend.Ships
 
         public ShipPart GetPartAt(int index)
         {
-            if (index == 0) return ShipPart.Front;
-            if (index == Length - 1) return ShipPart.Back;
+            if (index == 0) return ShipPart.Back;
+            if (index == Length - 1) return ShipPart.Front;
             return ShipPart.Middle;
         }
     }
