@@ -19,7 +19,8 @@ namespace BattleshipWinforms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            GamePVP gamePVP = new GamePVP();
+            GamePVPRush gamePVP = new GamePVPRush(new List<string>() { "Player 1" });
+            gamePVP.WindowState = FormWindowState.Maximized;
             gamePVP.Show();
         }
     }

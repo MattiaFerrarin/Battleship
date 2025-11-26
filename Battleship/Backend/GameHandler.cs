@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,29 +14,36 @@ namespace BattleshipWinforms.Backend
         public delegate void CellHitEventHandler(int x, int y, ExternalCellState state);
         public event CellHitEventHandler CellHit;
 
-        public GameHandler(int size, List<string> players)
+        public GameHandler(Size size, List<string> players)
         {
-            if (size < 1)
-                size = 1;
+            if (size.Width < 1)
+                size.Width = 1;
+            if (size.Height < 1)
+                size.Height = 1;
             foreach (string player in players)
             {
-                Boards.Add(player, new Board(size, size));
+                Boards.Add(player, new Board(size.Width, size.Height));
             }
         }
 
-        public ExternalCellState ShootAt(Board board, int x, int y)
+        public ExternalCellState? ShootAt(Board board, int x, int y)
         {
-            var state = board.Cells[x, y].Hit();
-
-            CellHit?.Invoke(x, y, state);
-
-            return state;
+            try
+            {
+                var state = board.Cells[x, y].Hit();
+                CellHit?.Invoke(x, y, state);
+                return state;
+            }
+            catch{ }
+            return null;
         }
     }
-    public enum GameStatus
+    public enum InternalGameStatus
     {
         None,
+        SettingUpShipPlacement,
         PlacingShips,
+        SettingUpAttack,
         Attacking
     }
 }

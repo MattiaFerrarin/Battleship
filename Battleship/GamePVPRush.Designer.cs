@@ -28,10 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // GamePVPRush
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "GamePVPRush";
+            this.KeyPreview = true;
+            this.Name = "GamePVPRush";
+            this.Text = "PvP Rush Game";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GamePVP_KeyDown);
+            this.ResumeLayout(false);
+
         }
 
         #endregion

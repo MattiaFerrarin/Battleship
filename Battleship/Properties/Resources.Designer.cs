@@ -63,6 +63,64 @@ namespace BattleshipWinforms.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BattleshipShipIcon {
+            get {
+                object obj = ResourceManager.GetObject("BattleshipShipIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CarrierShipIcon {
+            get {
+                object obj = ResourceManager.GetObject("CarrierShipIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DestroyerShipIcon {
+            get {
+                object obj = ResourceManager.GetObject("DestroyerShipIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.IO.UnmanagedMemoryStream simile a System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream hitAudio {
+            get {
+                return ResourceManager.GetStream("hitAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.IO.UnmanagedMemoryStream simile a System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream missAudio {
+            get {
+                return ResourceManager.GetStream("missAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RescueShipIcon {
+            get {
+                object obj = ResourceManager.GetObject("RescueShipIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap setting {
             get {
                 object obj = ResourceManager.GetObject("setting", resourceCulture);
@@ -73,9 +131,9 @@ namespace BattleshipWinforms.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Ship_Battleship_Back_Hor {
+        internal static System.Drawing.Bitmap Ship_Generic_Back_Hor {
             get {
-                object obj = ResourceManager.GetObject("Ship_Battleship_Back_Hor", resourceCulture);
+                object obj = ResourceManager.GetObject("Ship_Generic_Back_Hor", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +141,9 @@ namespace BattleshipWinforms.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Ship_Battleship_Back_Ver {
+        internal static System.Drawing.Bitmap Ship_Generic_Back_Ver {
             get {
-                object obj = ResourceManager.GetObject("Ship_Battleship_Back_Ver", resourceCulture);
+                object obj = ResourceManager.GetObject("Ship_Generic_Back_Ver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +151,9 @@ namespace BattleshipWinforms.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Ship_Battleship_Front_Hor {
+        internal static System.Drawing.Bitmap Ship_Generic_Front_Hor {
             get {
-                object obj = ResourceManager.GetObject("Ship_Battleship_Front_Hor", resourceCulture);
+                object obj = ResourceManager.GetObject("Ship_Generic_Front_Hor", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +161,9 @@ namespace BattleshipWinforms.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Ship_Battleship_Front_Ver {
+        internal static System.Drawing.Bitmap Ship_Generic_Front_Ver {
             get {
-                object obj = ResourceManager.GetObject("Ship_Battleship_Front_Ver", resourceCulture);
+                object obj = ResourceManager.GetObject("Ship_Generic_Front_Ver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +171,9 @@ namespace BattleshipWinforms.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Ship_Battleship_Middle_Hor {
+        internal static System.Drawing.Bitmap Ship_Generic_Middle_Hor {
             get {
-                object obj = ResourceManager.GetObject("Ship_Battleship_Middle_Hor", resourceCulture);
+                object obj = ResourceManager.GetObject("Ship_Generic_Middle_Hor", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,10 +181,38 @@ namespace BattleshipWinforms.Properties {
         /// <summary>
         ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Ship_Battleship_Middle_Ver {
+        internal static System.Drawing.Bitmap Ship_Generic_Middle_Ver {
             get {
-                object obj = ResourceManager.GetObject("Ship_Battleship_Middle_Ver", resourceCulture);
+                object obj = ResourceManager.GetObject("Ship_Generic_Middle_Ver", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SubmarineShipIcon {
+            get {
+                object obj = ResourceManager.GetObject("SubmarineShipIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.IO.UnmanagedMemoryStream simile a System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream sunkAudio {
+            get {
+                return ResourceManager.GetStream("sunkAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Cerca una risorsa localizzata di tipo System.IO.UnmanagedMemoryStream simile a System.IO.MemoryStream.
+        /// </summary>
+        internal static System.IO.UnmanagedMemoryStream victoryAudio {
+            get {
+                return ResourceManager.GetStream("victoryAudio", resourceCulture);
             }
         }
     }

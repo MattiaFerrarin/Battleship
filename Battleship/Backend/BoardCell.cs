@@ -22,6 +22,12 @@ namespace BattleshipWinforms.Backend
             ExternalState = ExternalCellState.Uncovered;
         }
 
+        public void RemoveShipTile()
+        {
+            InternalState = InternalCellState.Empty;
+            ShipTile = null;
+        }
+
         public void PlaceShipTile(ShipTile tile)
         {
             InternalState = InternalCellState.Occupied;

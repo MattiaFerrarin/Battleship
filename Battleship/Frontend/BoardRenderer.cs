@@ -7,13 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static BattleshipWinforms.GamePVPRush;
 
 namespace BattleshipWinforms.Frontend
 {
     public static class BoardRenderer
     {
-        private static Size _IndividualCellSize = new Size(30,30);
-        public static TableLayoutPanel CreateBoard(Board board, Action<int, int> onCellClick)
+        private static Size _IndividualCellSize = new Size(50,50);
+        public static TableLayoutPanel CreateBoard(Board board, Action<int, int> onCellClick, EventHandler onMouseEnter, EventHandler onMouseLeave)
         {
             int w = board.Width;
             int h = board.Height;
@@ -24,13 +25,17 @@ namespace BattleshipWinforms.Frontend
                 ColumnCount = w,
                 Width = w * _IndividualCellSize.Width,
                 Height = h * _IndividualCellSize.Height,
-                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single
+                CellBorderStyle = TableLayoutPanelCellBorderStyle.Single,
+                AutoSize = false,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                Margin = new Padding(0),
+                Padding = new Padding(0)
             };
 
             for (int i = 0; i < w; i++)
-                tlp.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / w)); // Makes the columns be resized by percentage
+                tlp.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, _IndividualCellSize.Width-1));
             for (int j = 0; j < h; j++)
-                tlp.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / h)); // Same but for rows
+                tlp.RowStyles.Add(new RowStyle(SizeType.Absolute, _IndividualCellSize.Height-1));
 
             for (int x = 0; x < w; x++)
             {
@@ -41,7 +46,9 @@ namespace BattleshipWinforms.Frontend
                         Dock = DockStyle.Fill,
                         SizeMode = PictureBoxSizeMode.StretchImage,
                         Tag = (x, y),
-                        BackColor = StateToBackColor(ExternalCellState.Uncovered)
+                        Margin = new Padding(0),
+                        BackColor = Color.Transparent
+                        //BackColor = StateToBackColor(ExternalCellState.Uncovered)
                     };
 
                     picBox.Click += (sender, e) =>
@@ -49,6 +56,8 @@ namespace BattleshipWinforms.Frontend
                         (int x, int y) coords = ((int, int))((PictureBox)sender).Tag;
                         onCellClick?.Invoke(coords.x, coords.y);
                     };
+                    picBox.MouseEnter += onMouseEnter;
+                    picBox.MouseLeave += onMouseLeave;
 
                     tlp.Controls.Add(picBox, x, y);
                 }
@@ -57,14 +66,17 @@ namespace BattleshipWinforms.Frontend
             return tlp;
         }
 
-        public static Color StateToBackColor(ExternalCellState state)
+        public static Color StateToBackColor(CellState state)
         {
             switch (state)
             {
-                case ExternalCellState.Hit:
+                case CellState.Hit:
                     return Color.Red;
-                case ExternalCellState.Miss:
-                    return Color.WhiteSmoke;
+                case CellState.Sunk:
+                    return Color.Black;
+                case CellState.Miss:
+                    return Color.Blue;
+                case CellState.Uncovered:
                 default:
                     return Color.LightBlue;
             }

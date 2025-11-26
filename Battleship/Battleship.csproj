@@ -33,8 +33,38 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Win32.Registry, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Win32.Registry.4.7.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.2.2.1\lib\net472\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Asio, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.Asio.2.2.1\lib\netstandard2.0\NAudio.Asio.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.Core.2.2.1\lib\netstandard2.0\NAudio.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Midi, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.Midi.2.2.1\lib\netstandard2.0\NAudio.Midi.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.Wasapi, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.Wasapi.2.2.1\lib\netstandard2.0\NAudio.Wasapi.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.WinForms, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.WinForms.2.2.1\lib\net472\NAudio.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio.WinMM, Version=2.2.1.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.WinMM.2.2.1\lib\netstandard2.0\NAudio.WinMM.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Security.AccessControl, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.AccessControl.4.7.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Principal.Windows.4.7.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,23 +79,19 @@
     <Compile Include="Backend\Board.cs" />
     <Compile Include="Backend\BoardCell.cs" />
     <Compile Include="Backend\GameHandler.cs" />
-    <Compile Include="Backend\ShipPositioningHandler.cs" />
+    <Compile Include="Backend\GameSettings.cs" />
+    <Compile Include="Backend\Ships\BoardActiveShip.cs" />
     <Compile Include="Backend\Ships\ConcreteShips.cs" />
     <Compile Include="Backend\Ships\Ship.cs" />
     <Compile Include="Frontend\BoardRenderer.cs" />
     <Compile Include="Frontend\ConcreteRenderers.cs" />
     <Compile Include="Frontend\IShipRenderer.cs" />
+    <Compile Include="Frontend\ShipIconRenderer.cs" />
     <Compile Include="GamePVC.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GamePVC.Designer.cs">
       <DependentUpon>GamePVC.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GamePVP.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GamePVP.Designer.cs">
-      <DependentUpon>GamePVP.cs</DependentUpon>
     </Compile>
     <Compile Include="GamePVPRush.cs">
       <SubType>Form</SubType>
@@ -73,11 +99,22 @@
     <Compile Include="GamePVPRush.Designer.cs">
       <DependentUpon>GamePVPRush.cs</DependentUpon>
     </Compile>
+    <Compile Include="GamePVP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GamePVP.Designer.cs">
+      <DependentUpon>GamePVP.cs</DependentUpon>
+    </Compile>
     <Compile Include="NewGamePage.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="NewGamePage.Designer.cs">
       <DependentUpon>NewGamePage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="StartPage.cs">
       <SubType>Form</SubType>
@@ -87,22 +124,21 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GamePVPRush.resx">
+      <DependentUpon>GamePVPRush.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="NewGamePage.resx">
       <DependentUpon>NewGamePage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="StartPage.resx">
       <DependentUpon>StartPage.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -120,22 +156,49 @@
     <None Include="Resources\setting.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Ship_Battleship_Back_Hor.png" />
+    <None Include="Resources\Ship_Generic_Back_Hor.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Ship_Battleship_Back_Ver.png" />
+    <None Include="Resources\Ship_Generic_Back_Ver.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Ship_Battleship_Front_Hor.png" />
+    <None Include="Resources\Ship_Generic_Front_Hor.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Ship_Battleship_Front_Ver.png" />
+    <None Include="Resources\Ship_Generic_Front_Ver.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Ship_Battleship_Middle_Hor.png" />
+    <None Include="Resources\Ship_Generic_Middle_Hor.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Ship_Battleship_Middle_Ver.png" />
+    <None Include="Resources\Ship_Generic_Middle_Ver.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DestroyerShipIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RescueShipIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SubmarineShipIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BattleshipShipIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CarrierShipIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sunkAudio.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\missAudio.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hitAudio.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\victoryAudio.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
