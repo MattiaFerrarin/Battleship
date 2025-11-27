@@ -1,4 +1,5 @@
 ﻿using BattleshipWinforms.Backend;
+using BattleshipWinforms.Backend.Audio;
 using BattleshipWinforms.Backend.Ships;
 using BattleshipWinforms.Frontend;
 using BattleshipWinforms.Properties;
@@ -32,15 +33,6 @@ namespace BattleshipWinforms
             new RescueShip(),
         });
 
-        // Ship Renderers access
-        private readonly Dictionary<Type, IShipRenderer> _ShipRenderers = new Dictionary<Type, IShipRenderer>()
-        {
-            { typeof(BattleshipShip), new BattleshipRenderer() },
-            { typeof(CarrierShip), new CarrierRenderer() },
-            { typeof(SubmarineShip), new SubmarineRenderer() },
-            { typeof(DestroyerShip), new DestroyerRenderer() },
-            { typeof(RescueShip), new RescueRenderer() }
-        };
         // For Placing cycle
         private Stack<Ship> _shipsToPlace = new Stack<Ship>();
         private Stack<Ship> _shipsPlacedHistory = new Stack<Ship>();
@@ -288,12 +280,12 @@ namespace BattleshipWinforms
 
             BoardActiveShipStatus? retVal = board.Hit(new Point(x,y));
             if (retVal == null)
-                PlaySound(SoundType.Miss);
+                AudioHandler.PlaySound(SoundType.Miss);
             if (retVal == BoardActiveShipStatus.Hit)
-                PlaySound(SoundType.Hit);
+                AudioHandler.PlaySound(SoundType.Hit);
             else if(retVal == BoardActiveShipStatus.Sunk)
             {
-                PlaySound(SoundType.Sunk);
+                AudioHandler.PlaySound(SoundType.Sunk);
                 BoardActiveShip sunkShip = board.GetShipFromCoords(new Point(x,y));
                 for (int i = 0; i < sunkShip.Ship.Length; i++)
                 {
@@ -325,7 +317,7 @@ namespace BattleshipWinforms
             // ------------------------------------------------------------
             if (remainingShips.Count == 0) // Won                  
             {
-                PlaySound(SoundType.Victory);
+                AudioHandler.PlaySound(SoundType.Victory);
                 MessageBox.Show($"{PlayerTurns.First()} has won!");
                 PlayerTurns.Dequeue();
                 
@@ -358,62 +350,6 @@ namespace BattleshipWinforms
         //
         // UI Functions
         //
-        private void UpdateShipQueueUI()
-        {
-            FlowLayoutPanel shipsQueuePnl = (FlowLayoutPanel)this.Controls.Find("flp_shipsQueue", false).First();
-            shipsQueuePnl.Controls.Clear();
-            foreach (var ship in _shipsToPlace.Reverse())
-            {
-                PictureBox pb = new PictureBox()
-                {
-                    Width = 50,
-                    Height = 50,
-                    SizeMode = PictureBoxSizeMode.StretchImage,
-                    Image = ShipIconRenderer.GetImage(ship)
-                };
-                shipsQueuePnl.Controls.Add(pb);
-            }
-        }
-
-        private void DrawShipOnUI(Ship ship, int startX, int startY)
-        {
-            var renderer = _ShipRenderers[ship.GetType()];
-
-            TableLayoutPanel tlp = (TableLayoutPanel)Controls.Find("boardPanel", false).First();
-
-            for (int i = 0; i < ship.Length; i++)
-            {
-                int x = ship.Orientation == Backend.Ships.Orientation.Horizontal ? startX + i : startX;
-                int y = ship.Orientation == Backend.Ships.Orientation.Vertical ? startY + i : startY;
-
-                PictureBox pb = (PictureBox)tlp.GetControlFromPosition(x, y);
-
-                ShipPart part = ship.GetPartAt(i);
-                pb.Image = renderer.GetImage(part, ship.Orientation);
-            }
-        }
-
-        private void RemoveShipFromUI(Ship ship, int startX, int startY)
-        {
-            TableLayoutPanel tlp = (TableLayoutPanel)Controls.Find("boardPanel", false).First();
-            for (int i = 0; i < ship.Length; i++)
-            {
-                int x = ship.Orientation == Backend.Ships.Orientation.Horizontal ? startX + i : startX;
-                int y = ship.Orientation == Backend.Ships.Orientation.Vertical ? startY + i : startY;
-                PictureBox pb = (PictureBox)tlp.GetControlFromPosition(x, y);
-                pb.Image = null;
-            }
-        }
-
-        private void UpdateCellColorUI(int x, int y, CellState state)
-        {
-            // Gets the controls of type TableLayoutPanel and picks the first (and only one)
-            TableLayoutPanel boardTLP = (TableLayoutPanel)Controls.Find("boardPanel", false).First();
-            // Uses a function of the TLP class that gets the control inside a certain cell (from row and col)
-            PictureBox pb = (PictureBox)boardTLP.GetControlFromPosition(x, y);
-
-            pb.BackColor = BoardRenderer.StateToBackColor(state);
-        }
 
         private void GamePVP_KeyDown(object sender, KeyEventArgs e)
         {
@@ -428,61 +364,6 @@ namespace BattleshipWinforms
                 OnRPressed();
                 return;
             }
-        }
-        #endregion
-        #region AudioFunctions
-        public void PlaySound(SoundType type)
-        {
-            UnmanagedMemoryStream audioStream;
-            switch (type)
-            {
-                case SoundType.Hit:
-                    audioStream = Resources.hitAudio;
-                    break;
-                case SoundType.Miss:
-                    audioStream = Resources.missAudio;
-                    break;
-                case SoundType.Sunk:
-                    audioStream = Resources.sunkAudio;
-                    break;
-                case SoundType.Victory:
-                    audioStream = Resources.victoryAudio;
-                    break;
-                default:
-                    return;
-            }
-            try
-            {
-                Task.Run(() =>
-                {
-                    MemoryStream copy = new MemoryStream();
-                    audioStream.CopyTo(copy);
-                    copy.Position = 0;
-
-                    WaveFileReader reader = new WaveFileReader(copy);
-                    WaveOutEvent output = new WaveOutEvent();
-                    output.Init(reader);
-                    output.Play();
-
-                    output.PlaybackStopped += (s, e) =>
-                    {
-                        output.Dispose();
-                        reader.Dispose();
-                        copy.Dispose();
-                    };
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error playing sound: {ex.Message}");
-            }
-        }
-        public enum SoundType
-        {
-            Hit,
-            Miss,
-            Sunk,
-            Victory
         }
         #endregion
         #region MiscellaneousUtility

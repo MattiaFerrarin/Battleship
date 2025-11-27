@@ -76,10 +76,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Backend\Board.cs" />
-    <Compile Include="Backend\BoardCell.cs" />
-    <Compile Include="Backend\GameHandler.cs" />
-    <Compile Include="Backend\GameSettings.cs" />
+    <Compile Include="Backend\Audio\AudioHandler.cs" />
+    <Compile Include="Backend\Game\Board.cs" />
+    <Compile Include="Backend\Game\BoardCell.cs" />
+    <Compile Include="Backend\Game\GameHandler.cs" />
+    <Compile Include="Backend\Game\GameSettings.cs" />
     <Compile Include="Backend\Ships\BoardActiveShip.cs" />
     <Compile Include="Backend\Ships\ConcreteShips.cs" />
     <Compile Include="Backend\Ships\Ship.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Frontend\ConcreteRenderers.cs" />
     <Compile Include="Frontend\IShipRenderer.cs" />
     <Compile Include="Frontend\ShipIconRenderer.cs" />
+    <Compile Include="Frontend\UIHandlers.cs" />
     <Compile Include="GamePVC.cs">
       <SubType>Form</SubType>
     </Compile>
