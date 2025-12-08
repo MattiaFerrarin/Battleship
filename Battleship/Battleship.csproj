@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5543C891-C317-4C76-BD2E-9EDA83F8E911}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>BattleshipWinforms</RootNamespace>
-    <AssemblyName>BattleshipWinforms</AssemblyName>
+    <RootNamespace>Battleship</RootNamespace>
+    <AssemblyName>Battleship</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -191,16 +191,16 @@
     <None Include="Resources\CarrierShipIcon.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\sunkAudio.wav" />
+    <None Include="Resources\victoryAudio.wav" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\missAudio.wav" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\hitAudio.wav" />
+    <None Include="Resources\sunkAudio.wav" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\victoryAudio.wav" />
+    <None Include="Resources\hitAudio.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

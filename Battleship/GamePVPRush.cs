@@ -1,8 +1,8 @@
-﻿using BattleshipWinforms.Backend;
-using BattleshipWinforms.Backend.Audio;
-using BattleshipWinforms.Backend.Ships;
-using BattleshipWinforms.Frontend;
-using BattleshipWinforms.Properties;
+﻿using Battleship.Backend;
+using Battleship.Backend.Audio;
+using Battleship.Backend.Ships;
+using Battleship.Frontend;
+using Battleship.Properties;
 using NAudio.Wave;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace BattleshipWinforms
+namespace Battleship
 {
     public partial class GamePVPRush : Form
     {
@@ -38,6 +38,15 @@ namespace BattleshipWinforms
         private Stack<Ship> _shipsPlacedHistory = new Stack<Ship>();
           // For Removing the ship rendering when rotating
           private Point LastVisitedCellCoords;
+        // Internal Gamespecific names
+        private readonly Dictionary<string,string> ControlNames = new Dictionary<string, string>()
+        {
+            { "board", "tlp_boardPanel" },
+            { "turnLabel", "lbl_turn" },
+            { "confirmButton", "btn_confirm" },
+            { "undoButton", "btn_undo" },
+            { "shipsQueue", "flp_shipsQueue" }
+        };
 
         public GamePVPRush(List<string> players)
         {
@@ -71,17 +80,16 @@ namespace BattleshipWinforms
                     break;
             }
         }
-
         private void SetupPlacingTurn(string player)
         {
             TableLayoutPanel boardPanel = BoardRenderer.CreateBoard(_GameHandler.Boards[player], OnBoardCellClickPlacing, OnBoardCellEnterPlacing, OnBoardCellLeavePlacing);
-            boardPanel.Name = "boardPanel";
+            boardPanel.Name = ControlNames["board"];
             boardPanel.Top = 50;
             boardPanel.Left = 50;
 
             Button confirmBtn = new Button()
             {
-                Name = "btn_confirm",
+                Name = ControlNames["confirmButton"],
                 Text = "Confirm Placement",
                 Top = boardPanel.Bottom + 10,
                 Left = boardPanel.Left,
@@ -108,7 +116,7 @@ namespace BattleshipWinforms
 
             Label labelTurn = new Label()
             {
-                Name = "lbl_turn",
+                Name = ControlNames["turnLabel"],
                 Text = $"Placing Turn of {player}",
                 Font = new Font("Arial", 14),
                 Top = boardPanel.Top - 30,
@@ -118,7 +126,7 @@ namespace BattleshipWinforms
 
             Button undoBtn = new Button()
             {
-                Name = "btn_undo",
+                Name = ControlNames["undoButton"],
                 Text = "Undo Last Ship",
                 Top = confirmBtn.Top,
                 Left = confirmBtn.Right + 10,
@@ -133,16 +141,16 @@ namespace BattleshipWinforms
                     BoardActiveShip lastActiveShipBoard = board.Ships.Find(sh => sh.Ship == lastShip);
                     Point lastShipPos = lastActiveShipBoard.Position;
                     board.RemoveShip(lastActiveShipBoard);
-                    RemoveShipFromUI(lastActiveShipBoard.Ship, lastShipPos.X, lastShipPos.Y);
+                    UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), lastActiveShipBoard.Ship, new Point(lastShipPos.X, lastShipPos.Y));
                     _shipsToPlace.Push(lastShip);
                     this.Controls.Find("btn_confirm", false).First().Enabled = false;
-                    UpdateShipQueueUI();
+                    UIHandlers.UpdateShipQueueUI((FlowLayoutPanel)GetSpecificControl(ControlNames["shipsQueue"]), _shipsToPlace);
                 }
             };
 
             FlowLayoutPanel shipsQueue = new FlowLayoutPanel()
             {
-                Name = "flp_shipsQueue",
+                Name = ControlNames["shipsQueue"],
                 FlowDirection = FlowDirection.LeftToRight,
                 AutoSize = true,
                 AutoSizeMode = AutoSizeMode.GrowAndShrink,
@@ -152,13 +160,12 @@ namespace BattleshipWinforms
                 Padding = new Padding(5)
             };
 
-            ReplaceControl(boardPanel, "boardPanel");
-            ReplaceControl(confirmBtn, "btn_confirm");
-            ReplaceControl(labelTurn, "lbl_turn");
-            ReplaceControl(undoBtn, "btn_undo");
-            ReplaceControl(shipsQueue, "flp_shipsQueue");
+            ReplaceControl(boardPanel, ControlNames["board"]);
+            ReplaceControl(confirmBtn, ControlNames["confirmButton"]);
+            ReplaceControl(labelTurn, ControlNames["turnLabel"]);
+            ReplaceControl(undoBtn, ControlNames["undoButton"]);
+            ReplaceControl(shipsQueue, ControlNames["shipsQueue"]);
         }
-
         private void StartPlacingShipsCycle()
         {
             var ships = _GameSettings.Ships;
@@ -166,19 +173,18 @@ namespace BattleshipWinforms
             {
                 _shipsToPlace.Push(ship);
             }
-            UpdateShipQueueUI();
+            UIHandlers.UpdateShipQueueUI((FlowLayoutPanel)GetSpecificControl(ControlNames["shipsQueue"]), _shipsToPlace);
         }
-
         private void SetupAttackingTurn(string player)
         {
             TableLayoutPanel boardPanel = BoardRenderer.CreateBoard(_GameHandler.Boards[player], OnBoardCellClickAttacking, OnBoardCellEnterAttacking, OnBoardCellLeaveAttacking);
-            boardPanel.Name = "boardPanel";
+            boardPanel.Name = ControlNames["board"];
             boardPanel.Top = 50;
             boardPanel.Left = 50;
 
             Label labelTurn = new Label()
             {
-                Name = "lbl_turn",
+                Name = ControlNames["turnLabel"],
                 Text = $"Placing Turn of {player}",
                 Font = new Font("Arial", 14),
                 Top = boardPanel.Top - 30,
@@ -186,13 +192,12 @@ namespace BattleshipWinforms
                 AutoSize = true
             };
 
-            ReplaceControl(boardPanel, "boardPanel");
-            ReplaceControl(labelTurn, "lbl_turn");
-            if (this.Controls.Find("flp_shipsQueue", false).First() != null) this.Controls.Remove(this.Controls.Find("flp_shipsQueue", false).First());
-            if (this.Controls.Find("btn_undo", false).First() != null) this.Controls.Remove(this.Controls.Find("btn_undo", false).First());
-            if (this.Controls.Find("btn_confirm", false).First() != null) this.Controls.Remove(this.Controls.Find("btn_confirm", false).First());
+            ReplaceControl(boardPanel, ControlNames["board"]);
+            ReplaceControl(labelTurn, ControlNames["turnLabel"]);
+            if (this.Controls.Find(ControlNames["shipsQueue"], false).First() != null) this.Controls.Remove(this.Controls.Find(ControlNames["shipsQueue"], false).First());
+            if (this.Controls.Find(ControlNames["undoButton"], false).First() != null) this.Controls.Remove(this.Controls.Find(ControlNames["undoButton"], false).First());
+            if (this.Controls.Find(ControlNames["confirmButton"], false).First() != null) this.Controls.Remove(this.Controls.Find(ControlNames["confirmButton"], false).First());
         }
-
         private void StartAttackingCycle()
         {
         }
@@ -206,11 +211,11 @@ namespace BattleshipWinforms
             if (_shipsToPlace.Count < 1)
                 return;
 
-            (int x, int y) coords = ((int, int)) ((PictureBox)sender).Tag;
-            LastVisitedCellCoords = new Point(coords.x, coords.y);
-            if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), new Point(coords.x, coords.y)))
+            Point coords = new Point((((int, int))((PictureBox)sender).Tag).Item1, (((int, int))((PictureBox)sender).Tag).Item2);
+            LastVisitedCellCoords = coords;
+            if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), coords))
             {
-                DrawShipOnUI(_shipsToPlace.First(),coords.x,coords.y);
+                UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), _shipsToPlace.First(),coords);
             }
         }
         private void OnBoardCellLeavePlacing(object sender, EventArgs e)
@@ -218,10 +223,10 @@ namespace BattleshipWinforms
             if (_shipsToPlace.Count < 1)
                 return;
 
-            (int x, int y) coords = ((int, int))((PictureBox)sender).Tag;
-            if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), new Point(coords.x, coords.y)))
+            Point coords = new Point((((int, int))((PictureBox)sender).Tag).Item1, (((int, int))((PictureBox)sender).Tag).Item2);
+            if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), coords))
             {
-                RemoveShipFromUI(_shipsToPlace.First(), coords.x, coords.y);
+                UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), _shipsToPlace.First(), coords);
             }
         }
         private void OnRPressed()
@@ -230,13 +235,27 @@ namespace BattleshipWinforms
             {
                 if (_shipsToPlace.Count > 0)
                 {
-                    if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), new Point(LastVisitedCellCoords.X, LastVisitedCellCoords.Y)))
+                    if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), LastVisitedCellCoords))
                     {
-                        RemoveShipFromUI(_shipsToPlace.First(), LastVisitedCellCoords.X, LastVisitedCellCoords.Y);
+                        UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), _shipsToPlace.First(), LastVisitedCellCoords);
                     }
                     _shipsToPlace.First().Rotate();
-                    OnBoardCellEnterPlacing(((TableLayoutPanel)this.Controls.Find("boardPanel", false).First()).GetControlFromPosition(LastVisitedCellCoords.X, LastVisitedCellCoords.Y), EventArgs.Empty);
+                    OnBoardCellEnterPlacing(((TableLayoutPanel)this.Controls.Find(ControlNames["board"], false).First()).GetControlFromPosition(LastVisitedCellCoords.X, LastVisitedCellCoords.Y), EventArgs.Empty);
                 }
+            }
+        }
+        private void GamePVP_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.R)
+            {
+                OnRPressed();
+                return;
+            }
+
+            if (!e.Control && e.KeyCode == Keys.R)
+            {
+                OnRPressed();
+                return;
             }
         }
         private void OnBoardCellClickPlacing(int x, int y)
@@ -254,7 +273,7 @@ namespace BattleshipWinforms
 
                     board.PlaceShip(_shipsToPlace.First(), new Point(x, y));
 
-                    DrawShipOnUI(_shipsToPlace.First(), x, y);
+                    UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), _shipsToPlace.First(), new Point(x, y));
                     _shipsPlacedHistory.Push(_shipsToPlace.Pop());
                 }
                 if(_shipsToPlace.Count < 1)
@@ -262,7 +281,7 @@ namespace BattleshipWinforms
                     this.Controls.Find("btn_confirm", false).First().Enabled = true;
                 }
             }
-            UpdateShipQueueUI();
+            UIHandlers.UpdateShipQueueUI((FlowLayoutPanel)GetSpecificControl(ControlNames["shipsQueue"]),_shipsToPlace);
         }
         #endregion
         #region AttackingTurn
@@ -278,6 +297,7 @@ namespace BattleshipWinforms
             if (board.Cells[x, y].ExternalState != ExternalCellState.Uncovered)
                 return;
 
+            // REMEMBER TO REMAKE THE .HIT() FUNCTION
             BoardActiveShipStatus? retVal = board.Hit(new Point(x,y));
             if (retVal == null)
                 AudioHandler.PlaySound(SoundType.Miss);
@@ -297,9 +317,9 @@ namespace BattleshipWinforms
                              ? sunkShip.Position.Y + i
                              : sunkShip.Position.Y;
 
-                    UpdateCellColorUI(sx, sy, CellState.Sunk);
+                    UIHandlers.UpdateCellColorUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), new Point(sx, sy), CellState.Sunk);
                 }
-                DrawShipOnUI(sunkShip.Ship, sunkShip.Position.X, sunkShip.Position.Y);
+                UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), sunkShip.Ship, sunkShip.Position);
             }
 
             ExternalCellState extCellState = board.Cells[x, y].ExternalState;
@@ -308,7 +328,7 @@ namespace BattleshipWinforms
                 extCellState == ExternalCellState.Hit && retVal != BoardActiveShipStatus.Sunk ? CellState.Hit :
                 extCellState == ExternalCellState.Miss ? CellState.Miss : CellState.Uncovered;
 
-            UpdateCellColorUI(x,y, colorCellState);
+            UIHandlers.UpdateCellColorUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), new Point(x,y), colorCellState);
 
 
             List<BoardActiveShip> remainingShips = GetRemainingShips(board);
@@ -327,12 +347,10 @@ namespace BattleshipWinforms
         }
         private void OnBoardCellEnterAttacking(object sender, EventArgs e)
         {
-            // (int x, int y) coords = ((int, int))((PictureBox)sender).Tag;
             // Paint yellow or something the tile
         }
         private void OnBoardCellLeaveAttacking(object sender, EventArgs e)
         {
-            // (int x, int y) coords = ((int, int))((PictureBox)sender).Tag;
             // Paint light blue or something the tile (untouched tile color)
         }
         private List<BoardActiveShip> GetRemainingShips(Board board)
@@ -346,30 +364,14 @@ namespace BattleshipWinforms
             return remainingShips;
         }
         #endregion
-        #region UIFunctions
-        //
-        // UI Functions
-        //
-
-        private void GamePVP_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Control && e.KeyCode == Keys.R)
-            {
-                OnRPressed();
-                return;
-            }
-
-            if (!e.Control && e.KeyCode == Keys.R)
-            {
-                OnRPressed();
-                return;
-            }
-        }
-        #endregion
         #region MiscellaneousUtility
         //
         // Miscellaneous Utility
         //
+        private Control GetSpecificControl(string name)
+        {
+            return this.Controls.Find(name, false).FirstOrDefault();
+        }
         private void ReplaceControl(Control control, string name)
         {
             var oldControl = this.Controls.Find(name, false).FirstOrDefault();

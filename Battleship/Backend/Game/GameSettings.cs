@@ -1,4 +1,4 @@
-﻿using BattleshipWinforms.Backend.Ships;
+﻿using Battleship.Backend.Ships;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleshipWinforms.Backend
+namespace Battleship.Backend
 {
     public class GameSettings
     {

@@ -1,4 +1,4 @@
-﻿using BattleshipWinforms.Backend.Ships;
+﻿using Battleship.Backend.Ships;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace BattleshipWinforms.Frontend
+namespace Battleship.Frontend
 {
     public static class ShipIconRenderer
     {

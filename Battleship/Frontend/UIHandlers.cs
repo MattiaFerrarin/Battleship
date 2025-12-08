@@ -1,14 +1,14 @@
-﻿using BattleshipWinforms.Backend.Ships;
+﻿using Battleship.Backend.Ships;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static BattleshipWinforms.GamePVPRush;
+using static Battleship.GamePVPRush;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace BattleshipWinforms.Frontend
+namespace Battleship.Frontend
 {
     public static class UIHandlers
     {
@@ -35,7 +35,6 @@ namespace BattleshipWinforms.Frontend
                 shipsQueueflp.Controls.Add(pb);
             }
         }
-
         public static void DrawShipOnUI(TableLayoutPanel boardtlp, Ship ship, Point coords)
         {
             var renderer = _ShipRenderers[ship.GetType()];
@@ -51,21 +50,19 @@ namespace BattleshipWinforms.Frontend
                 pb.Image = renderer.GetImage(part, ship.Orientation);
             }
         }
-
         public static void RemoveShipFromUI(TableLayoutPanel boardtlp, Ship ship, Point coords)
         {
             for (int i = 0; i < ship.Length; i++)
             {
-                int x = ship.Orientation == Backend.Ships.Orientation.Horizontal ? startX + i : startX;
-                int y = ship.Orientation == Backend.Ships.Orientation.Vertical ? startY + i : startY;
+                int x = ship.Orientation == Backend.Ships.Orientation.Horizontal ? coords.X + i : coords.X;
+                int y = ship.Orientation == Backend.Ships.Orientation.Vertical ? coords.Y + i : coords.Y;
                 PictureBox pb = (PictureBox)boardtlp.GetControlFromPosition(x, y);
                 pb.Image = null;
             }
         }
-
         public static void UpdateCellColorUI(TableLayoutPanel boardtlp, Point coords, CellState state)
         {
-            PictureBox pb = (PictureBox)boardtlp.GetControlFromPosition(x, y);
+            PictureBox pb = (PictureBox)boardtlp.GetControlFromPosition(coords.X, coords.Y);
 
             pb.BackColor = BoardRenderer.StateToBackColor(state);
         }

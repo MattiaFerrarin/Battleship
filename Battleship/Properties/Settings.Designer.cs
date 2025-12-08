@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BattleshipWinforms.Properties
+namespace Battleship.Properties
 {
 
 

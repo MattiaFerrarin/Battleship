@@ -8,11 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace BattleshipWinforms
+namespace Battleship
 {
     public partial class GamePVC : Form
     {
-        public GamePVC()
+        public GamePVC(List<string> players)
         {
             InitializeComponent();
         }

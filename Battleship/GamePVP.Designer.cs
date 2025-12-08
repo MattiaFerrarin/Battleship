@@ -1,4 +1,4 @@
-﻿namespace BattleshipWinforms
+﻿namespace Battleship
 {
     partial class GamePVP
     {

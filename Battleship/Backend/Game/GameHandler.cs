@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleshipWinforms.Backend
+namespace Battleship.Backend
 {
     public class GameHandler
     {

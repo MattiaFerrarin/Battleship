@@ -1,4 +1,4 @@
-﻿using BattleshipWinforms.Backend.Ships;
+﻿using Battleship.Backend.Ships;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
 
-namespace BattleshipWinforms.Backend
+namespace Battleship.Backend
 {
     public class Board
     {
@@ -29,6 +29,7 @@ namespace BattleshipWinforms.Backend
                     Cells[x, y] = new BoardCell();
         }
 
+        // TO REMAKE ENTIRELY THIS FUNCTION
         public BoardActiveShipStatus? Hit(Point coords)
         {
             foreach(var ship in Ships)
@@ -47,6 +48,8 @@ namespace BattleshipWinforms.Backend
                     return ship.Status;
                 }
             }
+            if (Cells[coords.X,coords.Y].ExternalState == ExternalCellState.Uncovered)
+                Cells[coords.X, coords.Y].Hit();
             return null;
         }
 

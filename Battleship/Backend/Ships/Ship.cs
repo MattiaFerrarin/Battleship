@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BattleshipWinforms.Backend.Ships
+namespace Battleship.Backend.Ships
 {
     public abstract class Ship
     {

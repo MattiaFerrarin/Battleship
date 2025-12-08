@@ -1,4 +1,4 @@
-﻿using BattleshipWinforms.Backend;
+﻿using Battleship.Backend;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static BattleshipWinforms.GamePVPRush;
+using static Battleship.GamePVPRush;
 
-namespace BattleshipWinforms.Frontend
+namespace Battleship.Frontend
 {
     public static class BoardRenderer
     {
@@ -71,11 +71,11 @@ namespace BattleshipWinforms.Frontend
             switch (state)
             {
                 case CellState.Hit:
-                    return Color.Red;
+                    return Color.DarkRed;
                 case CellState.Sunk:
                     return Color.Black;
                 case CellState.Miss:
-                    return Color.Blue;
+                    return Color.DarkBlue;
                 case CellState.Uncovered:
                 default:
                     return Color.LightBlue;
