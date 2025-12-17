@@ -28,7 +28,7 @@ namespace Battleship
 
         private void btn_newPvP_Click(object sender, EventArgs e)
         {
-            GamePVP GamePVP = new GamePVP(new List<string>() { "Player 1" });
+            GamePVP GamePVP = new GamePVP(new List<string>() { txb_player1.Text, txb_player2.Text });
             GamePVP.WindowState = FormWindowState.Maximized;
             this.Hide();
             GamePVP.FormClosed += (s, args) => this.Close();
@@ -37,7 +37,7 @@ namespace Battleship
 
         private void btn_newPvPRush_Click(object sender, EventArgs e)
         {
-            GamePVPRush gamePVPRush = new GamePVPRush(new List<string>() { "Player 1" });
+            GamePVPRush gamePVPRush = new GamePVPRush(new List<string>() { txb_player1.Text });
             gamePVPRush.WindowState = FormWindowState.Maximized;
             this.Hide();
             gamePVPRush.FormClosed += (s, args) => this.Close();
@@ -46,7 +46,7 @@ namespace Battleship
 
         private void btn_newPvC_Click(object sender, EventArgs e)
         {
-            GamePVC GamePVC = new GamePVC(new List<string>() { "Player 1" });
+            GamePVC GamePVC = new GamePVC(new List<string>() { txb_player1.Text });
             GamePVC.WindowState = FormWindowState.Maximized;
             this.Hide();
             GamePVC.FormClosed += (s, args) => this.Close();

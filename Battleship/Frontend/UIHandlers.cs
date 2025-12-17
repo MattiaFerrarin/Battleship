@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Battleship.GamePVPRush;
 using System.Windows.Forms;
 using System.Drawing;
+
+using static Battleship.Utils;
 
 namespace Battleship.Frontend
 {

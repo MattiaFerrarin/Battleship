@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Battleship.GamePVPRush;
+
+using static Battleship.Utils;
 
 namespace Battleship.Frontend
 {

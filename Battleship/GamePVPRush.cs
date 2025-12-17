@@ -16,6 +16,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using static Battleship.Utils;
+
 namespace Battleship
 {
     public partial class GamePVPRush : Form
@@ -141,10 +143,10 @@ namespace Battleship
                     BoardActiveShip lastActiveShipBoard = board.Ships.Find(sh => sh.Ship == lastShip);
                     Point lastShipPos = lastActiveShipBoard.Position;
                     board.RemoveShip(lastActiveShipBoard);
-                    UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), lastActiveShipBoard.Ship, new Point(lastShipPos.X, lastShipPos.Y));
+                    UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), lastActiveShipBoard.Ship, new Point(lastShipPos.X, lastShipPos.Y));
                     _shipsToPlace.Push(lastShip);
                     this.Controls.Find("btn_confirm", false).First().Enabled = false;
-                    UIHandlers.UpdateShipQueueUI((FlowLayoutPanel)GetSpecificControl(ControlNames["shipsQueue"]), _shipsToPlace);
+                    UIHandlers.UpdateShipQueueUI((FlowLayoutPanel)GetSpecificControl(this, ControlNames["shipsQueue"]), _shipsToPlace);
                 }
             };
 
@@ -160,11 +162,11 @@ namespace Battleship
                 Padding = new Padding(5)
             };
 
-            ReplaceControl(boardPanel, ControlNames["board"]);
-            ReplaceControl(confirmBtn, ControlNames["confirmButton"]);
-            ReplaceControl(labelTurn, ControlNames["turnLabel"]);
-            ReplaceControl(undoBtn, ControlNames["undoButton"]);
-            ReplaceControl(shipsQueue, ControlNames["shipsQueue"]);
+            ReplaceControl(this, boardPanel, ControlNames["board"]);
+            ReplaceControl(this, confirmBtn, ControlNames["confirmButton"]);
+            ReplaceControl(this, labelTurn, ControlNames["turnLabel"]);
+            ReplaceControl(this, undoBtn, ControlNames["undoButton"]);
+            ReplaceControl(this, shipsQueue, ControlNames["shipsQueue"]);
         }
         private void StartPlacingShipsCycle()
         {
@@ -173,7 +175,7 @@ namespace Battleship
             {
                 _shipsToPlace.Push(ship);
             }
-            UIHandlers.UpdateShipQueueUI((FlowLayoutPanel)GetSpecificControl(ControlNames["shipsQueue"]), _shipsToPlace);
+            UIHandlers.UpdateShipQueueUI((FlowLayoutPanel)GetSpecificControl(this, ControlNames["shipsQueue"]), _shipsToPlace);
         }
         private void SetupAttackingTurn(string player)
         {
@@ -185,15 +187,15 @@ namespace Battleship
             Label labelTurn = new Label()
             {
                 Name = ControlNames["turnLabel"],
-                Text = $"Placing Turn of {player}",
+                Text = $"Attacking Turn of {player}",
                 Font = new Font("Arial", 14),
                 Top = boardPanel.Top - 30,
                 Left = boardPanel.Left,
                 AutoSize = true
             };
 
-            ReplaceControl(boardPanel, ControlNames["board"]);
-            ReplaceControl(labelTurn, ControlNames["turnLabel"]);
+            ReplaceControl(this, boardPanel, ControlNames["board"]);
+            ReplaceControl(this, labelTurn, ControlNames["turnLabel"]);
             if (this.Controls.Find(ControlNames["shipsQueue"], false).First() != null) this.Controls.Remove(this.Controls.Find(ControlNames["shipsQueue"], false).First());
             if (this.Controls.Find(ControlNames["undoButton"], false).First() != null) this.Controls.Remove(this.Controls.Find(ControlNames["undoButton"], false).First());
             if (this.Controls.Find(ControlNames["confirmButton"], false).First() != null) this.Controls.Remove(this.Controls.Find(ControlNames["confirmButton"], false).First());
@@ -215,7 +217,7 @@ namespace Battleship
             LastVisitedCellCoords = coords;
             if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), coords))
             {
-                UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), _shipsToPlace.First(),coords);
+                UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), _shipsToPlace.First(),coords);
             }
         }
         private void OnBoardCellLeavePlacing(object sender, EventArgs e)
@@ -226,7 +228,7 @@ namespace Battleship
             Point coords = new Point((((int, int))((PictureBox)sender).Tag).Item1, (((int, int))((PictureBox)sender).Tag).Item2);
             if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), coords))
             {
-                UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), _shipsToPlace.First(), coords);
+                UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), _shipsToPlace.First(), coords);
             }
         }
         private void OnRPressed()
@@ -237,7 +239,7 @@ namespace Battleship
                 {
                     if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), LastVisitedCellCoords))
                     {
-                        UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), _shipsToPlace.First(), LastVisitedCellCoords);
+                        UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), _shipsToPlace.First(), LastVisitedCellCoords);
                     }
                     _shipsToPlace.First().Rotate();
                     OnBoardCellEnterPlacing(((TableLayoutPanel)this.Controls.Find(ControlNames["board"], false).First()).GetControlFromPosition(LastVisitedCellCoords.X, LastVisitedCellCoords.Y), EventArgs.Empty);
@@ -273,7 +275,7 @@ namespace Battleship
 
                     board.PlaceShip(_shipsToPlace.First(), new Point(x, y));
 
-                    UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), _shipsToPlace.First(), new Point(x, y));
+                    UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), _shipsToPlace.First(), new Point(x, y));
                     _shipsPlacedHistory.Push(_shipsToPlace.Pop());
                 }
                 if(_shipsToPlace.Count < 1)
@@ -281,7 +283,7 @@ namespace Battleship
                     this.Controls.Find("btn_confirm", false).First().Enabled = true;
                 }
             }
-            UIHandlers.UpdateShipQueueUI((FlowLayoutPanel)GetSpecificControl(ControlNames["shipsQueue"]),_shipsToPlace);
+            UIHandlers.UpdateShipQueueUI((FlowLayoutPanel)GetSpecificControl(this, ControlNames["shipsQueue"]),_shipsToPlace);
         }
         #endregion
         #region AttackingTurn
@@ -317,9 +319,9 @@ namespace Battleship
                              ? sunkShip.Position.Y + i
                              : sunkShip.Position.Y;
 
-                    UIHandlers.UpdateCellColorUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), new Point(sx, sy), CellState.Sunk);
+                    UIHandlers.UpdateCellColorUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), new Point(sx, sy), CellState.Sunk);
                 }
-                UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), sunkShip.Ship, sunkShip.Position);
+                UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), sunkShip.Ship, sunkShip.Position);
             }
 
             ExternalCellState extCellState = board.Cells[x, y].ExternalState;
@@ -328,7 +330,7 @@ namespace Battleship
                 extCellState == ExternalCellState.Hit && retVal != BoardActiveShipStatus.Sunk ? CellState.Hit :
                 extCellState == ExternalCellState.Miss ? CellState.Miss : CellState.Uncovered;
 
-            UIHandlers.UpdateCellColorUI((TableLayoutPanel)GetSpecificControl(ControlNames["board"]), new Point(x,y), colorCellState);
+            UIHandlers.UpdateCellColorUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), new Point(x,y), colorCellState);
 
 
             List<BoardActiveShip> remainingShips = GetRemainingShips(board);
@@ -362,28 +364,6 @@ namespace Battleship
                     remainingShips.Add(ship);
             }
             return remainingShips;
-        }
-        #endregion
-        #region MiscellaneousUtility
-        //
-        // Miscellaneous Utility
-        //
-        private Control GetSpecificControl(string name)
-        {
-            return this.Controls.Find(name, false).FirstOrDefault();
-        }
-        private void ReplaceControl(Control control, string name)
-        {
-            var oldControl = this.Controls.Find(name, false).FirstOrDefault();
-            if (oldControl != null) this.Controls.Remove(oldControl);
-            this.Controls.Add(control);
-        }
-        public enum CellState
-        {
-            Hit,
-            Sunk,
-            Miss,
-            Uncovered
         }
         #endregion
     }
