@@ -51,6 +51,18 @@ namespace Battleship.Frontend
                 pb.Image = renderer.GetImage(part, ship.Orientation);
             }
         }
+        public static void DrawShipTileOnUI(TableLayoutPanel boardtlp, BoardActiveShip activeShip, Point coords)
+        {
+            var renderer = _ShipRenderers[activeShip.Ship.GetType()];
+
+            if (activeShip.IsAtPosition(coords))
+            {
+                PictureBox pb = (PictureBox)boardtlp.GetControlFromPosition(coords.X, coords.Y);
+                ShipPart part = activeShip.Ship.GetPartAt(activeShip.Ship.Orientation == Backend.Ships.Orientation.Horizontal ? coords.X - activeShip.Position.X : coords.Y - activeShip.Position.Y);
+                
+                pb.Image = renderer.GetImage(part, activeShip.Ship.Orientation);
+            }
+        }
         public static void RemoveShipFromUI(TableLayoutPanel boardtlp, Ship ship, Point coords)
         {
             for (int i = 0; i < ship.Length; i++)

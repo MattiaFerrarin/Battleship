@@ -16,9 +16,6 @@ using static Battleship.Utils;
 
 namespace Battleship
 {
-    //
-    // TO REVIEW TOTALLY
-    //
     public partial class GamePVP : Form
     {
         private List<string> Players;
@@ -40,7 +37,7 @@ namespace Battleship
         // For Removing the ship rendering when rotating
         private Point LastVisitedCellCoords;
         // For Attacking cycle
-        private bool _isSwitchingTurn = false;
+        private bool _switchingTurn = false;
         private int _nextAttackingTurnDelay = 1000;
         // Internal Gamespecific names
         private readonly Dictionary<string, string> ControlNames = new Dictionary<string, string>()
@@ -71,14 +68,20 @@ namespace Battleship
                     SetupPlacingTurn(PlayerTurns.First());
                     InternalGameState = InternalGameStatus.PlacingShips;
                     goto case InternalGameStatus.PlacingShips;
+
                 case InternalGameStatus.PlacingShips:
                     StartPlacingShipsCycle();
                     break;
-                case InternalGameStatus.SettingUpAttack:
+
+                case InternalGameStatus.PhaseChangePlaceAttack:
                     PlayerTurns = new Queue<string>(Players);
+                    goto case InternalGameStatus.SettingUpAttack;
+
+                case InternalGameStatus.SettingUpAttack:
                     SetupAttackingTurn(PlayerTurns.First());
                     InternalGameState = InternalGameStatus.Attacking;
                     goto case InternalGameStatus.Attacking;
+
                 case InternalGameStatus.Attacking:
                     StartAttackingCycle();
                     break;
@@ -112,7 +115,7 @@ namespace Battleship
                     }
                     else
                     {
-                        InternalGameState = InternalGameStatus.SettingUpAttack;
+                        InternalGameState = InternalGameStatus.PhaseChangePlaceAttack;
                         CycleHandler();
                     }
                 }
@@ -178,13 +181,13 @@ namespace Battleship
             var ships = _GameSettings.Ships;
             foreach (var ship in ships)
             {
-                _shipsToPlace.Push(ShipFactory.CreateShip(ship.GetType()));
+                _shipsToPlace.Push(ship);
             }
             UIHandlers.UpdateShipQueueUI((FlowLayoutPanel)GetSpecificControl(this, ControlNames["shipsQueue"]), _shipsToPlace);
         }
         private void SetupAttackingTurn(string player)
         {
-            TableLayoutPanel boardPanel = BoardRenderer.CreateBoard(_GameHandler.Boards[player], OnBoardCellClickAttacking, OnBoardCellEnterAttacking, OnBoardCellLeaveAttacking);
+            TableLayoutPanel boardPanel = BoardRenderer.CreateBoard(GetOpponentBoardFromPlayer(player), OnBoardCellClickAttacking, OnBoardCellEnterAttacking, OnBoardCellLeaveAttacking);
             boardPanel.Name = ControlNames["board"];
             boardPanel.Top = 50;
             boardPanel.Left = 50;
@@ -201,9 +204,9 @@ namespace Battleship
 
             ReplaceControl(this, boardPanel, ControlNames["board"]);
             ReplaceControl(this, labelTurn, ControlNames["turnLabel"]);
-            if (this.Controls.Find(ControlNames["shipsQueue"], false).First() != null) this.Controls.Remove(this.Controls.Find(ControlNames["shipsQueue"], false).First());
-            if (this.Controls.Find(ControlNames["undoButton"], false).First() != null) this.Controls.Remove(this.Controls.Find(ControlNames["undoButton"], false).First());
-            if (this.Controls.Find(ControlNames["confirmButton"], false).First() != null) this.Controls.Remove(this.Controls.Find(ControlNames["confirmButton"], false).First());
+            if (this.Controls.ContainsKey(ControlNames["shipsQueue"])) this.Controls.Remove(this.Controls.Find(ControlNames["shipsQueue"], false).First());
+            if (this.Controls.ContainsKey(ControlNames["undoButton"])) this.Controls.Remove(this.Controls.Find(ControlNames["undoButton"], false).First());
+            if (this.Controls.ContainsKey(ControlNames["confirmButton"])) this.Controls.Remove(this.Controls.Find(ControlNames["confirmButton"], false).First());
         }
         private void StartAttackingCycle()
         {
@@ -283,7 +286,8 @@ namespace Battleship
                     UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), _shipsToPlace.First(), new Point(x, y));
                     _shipsPlacedHistory.Push(_shipsToPlace.Pop());
                 }
-                if (_shipsToPlace.Count < 1)
+
+                if (_shipsToPlace.Count < 1) // Not an else because if the ship gets removed in the same turn it needs to be enabled
                 {
                     this.Controls.Find("btn_confirm", false).First().Enabled = true;
                 }
@@ -297,22 +301,14 @@ namespace Battleship
         //
         private async void OnBoardCellClickAttacking(int x, int y)
         {
-            if (InternalGameState != InternalGameStatus.Attacking)
-                return;
-
-            if (_isSwitchingTurn)
+            if (InternalGameState != InternalGameStatus.Attacking || _switchingTurn)
                 return;
 
             Board board = GetOpponentBoardFromPlayer(PlayerTurns.First());
-            if(board == null)
+            if(board == null  ||  board.Cells[x, y].ExternalState != ExternalCellState.Uncovered)
                 return;
 
-            if (board.Cells[x, y].ExternalState != ExternalCellState.Uncovered)
-                return;
-
-            _isSwitchingTurn = true;
-
-            // REMEMBER TO REMAKE THE .HIT() FUNCTION
+            _switchingTurn = true;
             BoardActiveShipStatus? retVal = board.Hit(new Point(x, y));
             if (retVal == null)
                 AudioHandler.PlaySound(SoundType.Miss);
@@ -347,25 +343,27 @@ namespace Battleship
 
 
             List<BoardActiveShip> remainingShips = GetRemainingShips(board);
-            // ------------------------------------------------------------
-            //  UNFLEXIBLE SINCE IT KIND OF WORKS WELL ONLY WITH 2 PLAYERS 
-            // ------------------------------------------------------------
             if (remainingShips.Count == 0) // Won
             {
                 AudioHandler.PlaySound(SoundType.Victory);
                 MessageBox.Show($"{PlayerTurns.First()} has won!");
-                _isSwitchingTurn = false;
-                PlayerTurns.Dequeue();
-
+                PlayerTurns.Clear(); // Force the stop of the game
+                _switchingTurn = false;
                 InternalGameState = InternalGameStatus.None;
                 CycleHandler();
-                return;
             }
-            // Next Turn
-            await Task.Delay(_nextAttackingTurnDelay);
-            PlayerTurns.Enqueue(PlayerTurns.Dequeue());
-            CycleHandler();
-            _isSwitchingTurn = false;
+            else
+            {
+                // Next Turn
+                await Task.Delay(_nextAttackingTurnDelay);
+                _switchingTurn = false;
+                if (!(extCellState == ExternalCellState.Hit))
+                {
+                    PlayerTurns.Enqueue(PlayerTurns.Dequeue());
+                    InternalGameState = InternalGameStatus.SettingUpAttack;
+                    CycleHandler();
+                }
+            }
         }
         private void OnBoardCellEnterAttacking(object sender, EventArgs e)
         {

@@ -43,6 +43,7 @@ namespace Battleship.Backend
         None,
         SettingUpShipPlacement,
         PlacingShips,
+        PhaseChangePlaceAttack,
         SettingUpAttack,
         Attacking
     }

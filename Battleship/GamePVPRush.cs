@@ -24,7 +24,7 @@ namespace Battleship
     {
         private List<string> Players;
         InternalGameStatus InternalGameState;
-        Queue<string> PlayerTurns;
+        string CurrentPlayer;
         GameHandler _GameHandler;
         GameSettings _GameSettings = new GameSettings(10, new List<Ship>() {
             new BattleshipShip(),
@@ -54,7 +54,7 @@ namespace Battleship
         {
             Players = players;
             InitializeComponent();
-            PlayerTurns = new Queue<string>(Players);
+            CurrentPlayer = Players.First();
             InternalGameState = InternalGameStatus.SettingUpShipPlacement;
             CycleHandler();
         }
@@ -66,15 +66,14 @@ namespace Battleship
             {
                 case InternalGameStatus.SettingUpShipPlacement:
                     _GameHandler = new GameHandler(_GameSettings.BoardSize, Players);
-                    SetupPlacingTurn(PlayerTurns.First());
+                    SetupPlacingTurn(CurrentPlayer);
                     InternalGameState = InternalGameStatus.PlacingShips;
                     goto case InternalGameStatus.PlacingShips;
                 case InternalGameStatus.PlacingShips:
                     StartPlacingShipsCycle();
                     break;
                 case InternalGameStatus.SettingUpAttack:
-                    PlayerTurns = new Queue<string>(Players);
-                    SetupAttackingTurn(PlayerTurns.First());
+                    SetupAttackingTurn(CurrentPlayer);
                     InternalGameState = InternalGameStatus.Attacking;
                     goto case InternalGameStatus.Attacking;
                 case InternalGameStatus.Attacking:
@@ -102,17 +101,8 @@ namespace Battleship
             {
                 if(_shipsToPlace.Count < 1)
                 {
-                    if(PlayerTurns.Count > 1)
-                    {
-                        PlayerTurns.Dequeue();
-                        InternalGameState = InternalGameStatus.SettingUpShipPlacement;
-                        CycleHandler();
-                    }
-                    else
-                    {
-                        InternalGameState = InternalGameStatus.SettingUpAttack;
-                        CycleHandler();
-                    }
+                    InternalGameState = InternalGameStatus.SettingUpAttack;
+                    CycleHandler();
                 }
             };
 
@@ -139,7 +129,7 @@ namespace Battleship
                 if(_shipsPlacedHistory.Count > 0)
                 {
                     Ship lastShip = _shipsPlacedHistory.Pop();
-                    Board board = _GameHandler.Boards[PlayerTurns.First()];
+                    Board board = _GameHandler.Boards[CurrentPlayer];
                     BoardActiveShip lastActiveShipBoard = board.Ships.Find(sh => sh.Ship == lastShip);
                     Point lastShipPos = lastActiveShipBoard.Position;
                     board.RemoveShip(lastActiveShipBoard);
@@ -215,7 +205,7 @@ namespace Battleship
 
             Point coords = new Point((((int, int))((PictureBox)sender).Tag).Item1, (((int, int))((PictureBox)sender).Tag).Item2);
             LastVisitedCellCoords = coords;
-            if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), coords))
+            if (_GameHandler.Boards[CurrentPlayer].CanPlaceShip(_shipsToPlace.First(), coords))
             {
                 UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), _shipsToPlace.First(),coords);
             }
@@ -226,7 +216,7 @@ namespace Battleship
                 return;
 
             Point coords = new Point((((int, int))((PictureBox)sender).Tag).Item1, (((int, int))((PictureBox)sender).Tag).Item2);
-            if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), coords))
+            if (_GameHandler.Boards[CurrentPlayer].CanPlaceShip(_shipsToPlace.First(), coords))
             {
                 UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), _shipsToPlace.First(), coords);
             }
@@ -237,7 +227,7 @@ namespace Battleship
             {
                 if (_shipsToPlace.Count > 0)
                 {
-                    if (_GameHandler.Boards[PlayerTurns.First()].CanPlaceShip(_shipsToPlace.First(), LastVisitedCellCoords))
+                    if (_GameHandler.Boards[CurrentPlayer].CanPlaceShip(_shipsToPlace.First(), LastVisitedCellCoords))
                     {
                         UIHandlers.RemoveShipFromUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), _shipsToPlace.First(), LastVisitedCellCoords);
                     }
@@ -266,7 +256,7 @@ namespace Battleship
             {
                 if (_shipsToPlace.Count > 0)
                 {
-                    Board board = _GameHandler.Boards[PlayerTurns.First()];
+                    Board board = _GameHandler.Boards[CurrentPlayer];
 
                     if (!board.CanPlaceShip(_shipsToPlace.First(), new Point(x, y)))
                     {
@@ -278,7 +268,8 @@ namespace Battleship
                     UIHandlers.DrawShipOnUI((TableLayoutPanel)GetSpecificControl(this, ControlNames["board"]), _shipsToPlace.First(), new Point(x, y));
                     _shipsPlacedHistory.Push(_shipsToPlace.Pop());
                 }
-                if(_shipsToPlace.Count < 1)
+
+                if (_shipsToPlace.Count < 1) // Not an else because if the ship gets removed in the same turn it needs to be enabled
                 {
                     this.Controls.Find("btn_confirm", false).First().Enabled = true;
                 }
@@ -295,7 +286,7 @@ namespace Battleship
             if (InternalGameState != InternalGameStatus.Attacking)
                 return;
 
-            Board board = _GameHandler.Boards[PlayerTurns.First()];
+            Board board = _GameHandler.Boards[CurrentPlayer];
             if (board.Cells[x, y].ExternalState != ExternalCellState.Uncovered)
                 return;
 
@@ -334,17 +325,12 @@ namespace Battleship
 
 
             List<BoardActiveShip> remainingShips = GetRemainingShips(board);
-            // ------------------------------------------------------------
-            //  UNFLEXIBLE SINCE IT KIND OF WORKS WELL ONLY WITH 2 PLAYERS
-            // ------------------------------------------------------------
             if (remainingShips.Count == 0) // Won                  
             {
                 AudioHandler.PlaySound(SoundType.Victory);
-                MessageBox.Show($"{PlayerTurns.First()} has won!");
-                PlayerTurns.Dequeue();
+                MessageBox.Show($"{CurrentPlayer} has lost all his ships!\nThe game has been won!");
                 
                 InternalGameState = InternalGameStatus.None;
-                CycleHandler();
             }
         }
         private void OnBoardCellEnterAttacking(object sender, EventArgs e)

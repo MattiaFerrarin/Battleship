@@ -1,4 +1,5 @@
 ﻿using Battleship.Backend;
+using Battleship.Backend.Ships;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
@@ -38,19 +39,41 @@ namespace Battleship.Frontend
             for (int j = 0; j < h; j++)
                 tlp.RowStyles.Add(new RowStyle(SizeType.Absolute, _IndividualCellSize.Height-1));
 
+            // Insert PictureBoxes and paint them appropiately
             for (int x = 0; x < w; x++)
             {
                 for (int y = 0; y < h; y++)
                 {
-                    PictureBox picBox = new PictureBox
+                    Color backColor;
+                    if (board.Cells[x,y].ExternalState == ExternalCellState.Uncovered)
                     {
-                        Dock = DockStyle.Fill,
-                        SizeMode = PictureBoxSizeMode.StretchImage,
-                        Tag = (x, y),
-                        Margin = new Padding(0),
-                        BackColor = Color.Transparent
-                        //BackColor = StateToBackColor(ExternalCellState.Uncovered)
-                    };
+                        backColor = Color.Transparent;
+                    }
+                    else if (board.Cells[x, y].ExternalState == ExternalCellState.Miss)
+                    {
+                        backColor = StateToBackColor(CellState.Miss);
+                    }
+                    else
+                    {
+                        BoardActiveShip activeShip = board.GetShipFromCoords(new Point(x, y));
+                        if (activeShip.Status == Backend.Ships.BoardActiveShipStatus.Sunk)
+                        {
+                            backColor = StateToBackColor(CellState.Sunk);
+                        }
+                        else
+                        {
+                            backColor = StateToBackColor(CellState.Hit);
+                        }
+                    }
+
+                    PictureBox picBox = new PictureBox
+                        {
+                            Dock = DockStyle.Fill,
+                            SizeMode = PictureBoxSizeMode.StretchImage,
+                            Tag = (x, y),
+                            Margin = new Padding(0),
+                            BackColor = backColor
+                        };
 
                     picBox.Click += (sender, e) =>
                     {
@@ -61,6 +84,25 @@ namespace Battleship.Frontend
                     picBox.MouseLeave += onMouseLeave;
 
                     tlp.Controls.Add(picBox, x, y);
+                }
+            }
+
+            // Draw previously sunk ships
+            for (int x = 0; x < w; x++)
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    if (tlp.GetControlFromPosition(x,y) is PictureBox picBox)
+                    {
+                        if(board.Cells[x, y].ExternalState == ExternalCellState.Hit)
+                        {
+                            BoardActiveShip activeShip = board.GetShipFromCoords(new Point(x, y));
+                            if(activeShip.Status == BoardActiveShipStatus.Sunk)
+                            {
+                                UIHandlers.DrawShipTileOnUI(tlp, activeShip, new Point(x, y));
+                            }
+                        }
+                    }
                 }
             }
 
